@@ -1,3 +1,9 @@
+# Optimized by ci-cost (https://github.com/mariotavarez/ci-cost)
+# Applied 2 optimizations:
+# - [MEDIUM] Add concurrency group to "commitlint.yml"
+# - [LOW] Use shallow clone in "commitlint" job
+# Estimated savings: ~2 min/run
+#
 name: Lint Commit Messages
 on:
   workflow_dispatch:
@@ -6,11 +12,15 @@ on:
     branches:
       - main
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   commitlint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - uses: wagoid/commitlint-github-action@v6
